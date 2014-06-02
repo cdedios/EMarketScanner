@@ -44,15 +44,7 @@ public class MainActivity extends ActionBarActivity {
                     .commit();
         }
         
-        //new HttpAsyncTask().execute("http://10.0.2.2:3000/");
-        InputStream content = null;
-        try {
-          HttpClient httpclient = new DefaultHttpClient();
-          HttpResponse response = httpclient.execute(new HttpGet("http://10.0.2.2:3000/"));
-          content = response.getEntity().getContent();
-        } catch (Exception e) {
-          //Log.("[GET REQUEST]", "Network exception", e);
-        }
+        new HttpAsyncTask().execute("http://10.0.2.2:3000/");
     }
 
     public static String POST(String url, Product product){
@@ -111,6 +103,18 @@ public class MainActivity extends ActionBarActivity {
         return result;
     }
  
+    public void getServer(String url)
+    {
+    	InputStream content = null;
+        try {
+          HttpClient httpclient = new DefaultHttpClient();
+          HttpResponse response = httpclient.execute(new HttpGet(url));
+          content = response.getEntity().getContent();
+        } catch (Exception e) {
+          //Log.("[GET REQUEST]", "Network exception", e);
+        }
+    }
+
     public boolean isConnected(){
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -137,7 +141,8 @@ public class MainActivity extends ActionBarActivity {
         protected String doInBackground(String... urls) {
  
             product = new Product(1234, "Patates", 19);
- 
+            
+            getServer(urls[0]);
             return POST(urls[0],product);
         }
         // onPostExecute displays the results of the AsyncTask.

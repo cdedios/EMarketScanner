@@ -9,13 +9,13 @@ app.set('public', __dirname + '/public');
 app.post('/', function (request, response) {
     var task = request.body;
     console.log(task);
-    console.log('Paco');
+    console.log('Paco posting');
     response.send(200);
 });
 app.get('/', function (request, response) {
     var task = request.body;
     console.log(task);
-    console.log('Paco');
+    console.log('Paco getting');
     response.send(200);
 });
 /*
