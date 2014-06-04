@@ -1,0 +1,41 @@
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:layout_gravity="center"
+  >
+
+  <FrameLayout
+    android:id="@+id/cameraPreview"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+  />
+
+  <TextView
+    android:id="@+id/scanText"
+    android:text="Please place your QR code identification close to the screen"
+    android:layout_height="wrap_content" 
+    android:layout_width="match_parent"
+    android:gravity="center"
+    >
+  </TextView>
+
+  <Button
+      android:id="@+id/ScanButton"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="Scan again"  
+      android:layout_gravity="center"
+      />
+ 
+  <Button
+    android:id="@+id/ConfirmationButton"
+    android:text="Confirm"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:onClick="openConfirmationActivity"
+  />
+</LinearLayout>
