@@ -47,9 +47,7 @@ public class LoginActivity extends Activity {
 	}
 
 	public void logInClicked(View view) {
-		//new HttpAsyncTask().execute("http://10.0.2.2:3000/login");
-		Intent intent = new Intent(getBaseContext(), QRReaderActivity.class);
-		startActivity(intent);
+		new HttpAsyncTask().execute("http://10.0.2.2:3000/login");
 	}
 	
 	public void registerClicked(View view) {
