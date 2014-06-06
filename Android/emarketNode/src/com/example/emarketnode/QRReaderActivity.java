@@ -12,6 +12,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import com.example.emarketnode.CameraPreview;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -46,6 +47,7 @@ public class QRReaderActivity extends Activity {
 	private Camera mCamera;
 	private CameraPreview mPreview;
 	private Handler autoFocusHandler;
+	private String scannedData = "";
 
 	TextView scanText;
 	Button scanButton, seeProduct;
@@ -60,49 +62,52 @@ public class QRReaderActivity extends Activity {
 	}
 
 	public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+		super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_qrreader);
+		setContentView(R.layout.activity_qrreader);
 
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        autoFocusHandler = new Handler();
-        mCamera = getCameraInstance();
+		autoFocusHandler = new Handler();
+		mCamera = getCameraInstance();
 
-        /* Instance barcode scanner */
-        scanner = new ImageScanner();
-        scanner.setConfig(0, Config.X_DENSITY, 3);
-        scanner.setConfig(0, Config.Y_DENSITY, 3);
+		/* Instance barcode scanner */
+		scanner = new ImageScanner();
+		scanner.setConfig(0, Config.X_DENSITY, 3);
+		scanner.setConfig(0, Config.Y_DENSITY, 3);
 
-        mPreview = new CameraPreview(this, mCamera, previewCb, autoFocusCB);
-        FrameLayout preview = (FrameLayout)findViewById(R.id.cameraPreview);
-        preview.addView(mPreview);
+		mPreview = new CameraPreview(this, mCamera, previewCb, autoFocusCB);
+		FrameLayout preview = (FrameLayout) findViewById(R.id.cameraPreview);
+		preview.addView(mPreview);
 
-        scanText = (TextView)findViewById(R.id.scanText);
+		scanText = (TextView) findViewById(R.id.scanText);
 
-        scanButton = (Button)findViewById(R.id.ScanButton);
-        seeProduct = (Button)findViewById(R.id.ConfirmationButton);
+		scanButton = (Button) findViewById(R.id.ScanButton);
+		seeProduct = (Button) findViewById(R.id.ConfirmationButton);
 
-        scanButton.setOnClickListener(new OnClickListener() {
-                public void onClick(View v) {
-                    if (barcodeScanned) {
-                        barcodeScanned = false;
-                        scanText.setText("Scanning...");
-                        mCamera.setPreviewCallback(previewCb);
-                        mCamera.startPreview();
-                        previewing = true;
-                        mCamera.autoFocus(autoFocusCB);
-                    }
-                }
-            });
-        seeProduct.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                if (barcodeScanned) {
-                   
-                }
-            }
-        });
-    }
+		scanButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				if (barcodeScanned) {
+					barcodeScanned = false;
+					scanText.setText("Scanning...");
+					mCamera.setPreviewCallback(previewCb);
+					mCamera.startPreview();
+					previewing = true;
+					mCamera.autoFocus(autoFocusCB);
+				}
+			}
+		});
+		seeProduct.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				if (barcodeScanned) {
+					Intent i = new Intent(getBaseContext(),
+							ProductActivity.class);
+					i.putExtra("productId", scannedData);
+					startActivity(i);
+				}
+			}
+		});
+	}
 
 	public void onPause() {
 		super.onPause();
@@ -153,6 +158,7 @@ public class QRReaderActivity extends Activity {
 				SymbolSet syms = scanner.getResults();
 				for (Symbol sym : syms) {
 					scanText.setText("barcode result " + sym.getData());
+					scannedData = sym.getData();
 					barcodeScanned = true;
 				}
 			}
@@ -165,52 +171,4 @@ public class QRReaderActivity extends Activity {
 			autoFocusHandler.postDelayed(doAutoFocus, 1000);
 		}
 	};
-	
-	private class GetProductsHttpAsyncTask extends AsyncTask<Void, Void, String> {
-        @Override
-        protected String doInBackground(Void... urls) {
- 
-            //product = new Product(1234, "Patates", 19);
-            
-            return getServer("http://10.0.2.2:3000/products");
-            
-        }
-        // onPostExecute displays the results of the AsyncTask.
-        @Override
-        protected void onPostExecute(String result) {
-        	
-            Toast.makeText(getBaseContext(), "Data Sent!", Toast.LENGTH_LONG).show();
-            Log.d("result", "Value: " + result);
-       }
-    }
-    public String getServer(String url)
-    {
-    	InputStream content = null;
-    	String result = "";
-        try {
-          HttpClient httpclient = new DefaultHttpClient();
-          HttpResponse response = httpclient.execute(new HttpGet(url));
-          content = response.getEntity().getContent();
-          // 10. convert inputstream to string
-          if(content != null)
-              result = convertInputStreamToString(content);
-          else
-              result = "Did not work!";
-        } catch (Exception e) {
-          //Log.("[GET REQUEST]", "Network exception", e);
-        }
-        
-        return result;
-    }
-    private static String convertInputStreamToString(InputStream inputStream) throws IOException{
-        BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
-        String line = "";
-        String result = "";
-        while((line = bufferedReader.readLine()) != null)
-            result += line;
- 
-        inputStream.close();
-        return result;
- 
-    }   
 }
