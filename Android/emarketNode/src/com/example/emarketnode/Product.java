@@ -2,16 +2,25 @@ package com.example.emarketnode;
 
 public class Product {
 	private double id;
-	private String name;
+	private String name,description;
 	private float prize;
 
-	public Product(double id, String name, float prize)
+	public Product(double id, String name, String desc, float prize)
 	{
 	  this.id    = id;
+	  this.description =  desc;
 	  this.name  = name;
 	  this.prize = prize;
 	}
 
+	public String getDescription() {
+		return this.description;
+	}
+
+	public void setDescription(String desc) {
+		this.description = desc;
+	}
+	
 	public double getId() {
 		return id;
 	}

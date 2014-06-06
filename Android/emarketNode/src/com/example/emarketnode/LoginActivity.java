@@ -130,8 +130,8 @@ public class LoginActivity extends Activity {
             Toast.makeText(getBaseContext(), "Data Sent!", Toast.LENGTH_LONG).show();
             
             if(result.compareTo("OK") == 0){
-            	/*Intent intent = new Intent(getBaseContext(), QRReaderActivity.class);
-        		startActivity(intent);*/
+            	Intent intent = new Intent(getBaseContext(), QRReaderActivity.class);
+        		startActivity(intent);
             }
        }
     }
@@ -144,7 +144,6 @@ public class LoginActivity extends Activity {
             result += line;
  
         inputStream.close();
-        return result;
- 
+        return result; 
     }   
 }

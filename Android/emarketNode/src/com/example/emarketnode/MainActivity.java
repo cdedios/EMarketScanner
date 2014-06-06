@@ -140,7 +140,7 @@ public class MainActivity extends ActionBarActivity {
         @Override
         protected String doInBackground(String... urls) {
  
-            product = new Product(1234, "Patates", 19);
+            //product = new Product(1234, "Patates", 19);
             
             getServer(urls[0]);
             return POST(urls[0],product);

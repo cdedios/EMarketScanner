@@ -21,21 +21,27 @@
     android:gravity="center"
     >
   </TextView>
-
-  <Button
-      android:id="@+id/ScanButton"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="Scan again"  
-      android:layout_gravity="center"
-      />
- 
-  <Button
-    android:id="@+id/ConfirmationButton"
-    android:text="Confirm"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:onClick="openConfirmationActivity"
-  />
+  <LinearLayout
+  android:orientation="horizontal"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:layout_gravity="center"
+  >	
+	  <Button
+	      android:id="@+id/ScanButton"
+	      android:layout_width="wrap_content"
+	      android:layout_height="wrap_content"
+	      android:text="Scan again"  
+	      android:layout_gravity="right"
+	      />
+	 
+	  <Button
+	    android:id="@+id/ConfirmationButton"
+	    android:text="See Product"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_gravity="right"
+	    android:onClick="openConfirmationActivity"
+	  />
+  </LinearLayout>
 </LinearLayout>
