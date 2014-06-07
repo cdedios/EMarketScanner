@@ -1,25 +1,25 @@
 // Indicamos los modulos que necesitaremos
 // Falta indicar el motor de render de las plantillas
 var express = require('express'),
-    favicon = require('serve-favicon'),
+    //favicon = require('serve-favicon'),
     bodyParser = require('body-parser'),
     methodOverride = require('method-override'),
     cookieParser = require('cookie-parser'),
     cookieSession = require('cookie-session'),
-    jade = require('jade'),
+    //*jade = require('jade'),
     auth = require('./simpleAuth'),
     app = express()
 ;
 
 // Definimos Parametros de forma global dentro de la Aplicación
 app.set('public', __dirname + '/public');
-app.set('views', __dirname + '/views');
+//*app.set('views', __dirname + '/views');
 app.set('secret cookies', 'texto opcional para el secret de las cookies');
 app.set('secret session', "asdf");
 
 // Configuramos el motor de las plantillas
-app.engine('jade', jade.__express);
-app.set('view engine', 'jade');
+//*app.engine('jade', jade.__express);
+//*app.set('view engine', 'jade');
 
 // Configuramos los elementos que utilizará Express.
 // Recuerda que es importante el orden!
@@ -60,7 +60,8 @@ extend(BaseModels, {
 });
 extend(BaseModels.prototype, {
     save: function() {
-        this.id = this.constructor._id++;
+        //this.id = this.constructor._id++;
+        this.id = this.prodQR;
         this.constructor._models.push(this);
     },
     update: function() {
@@ -80,10 +81,17 @@ extend(BaseModels.prototype, {
 });
 
 var Product = function(data) {
-    data = extend({}, {name: "", prize: 0, desc: ""}, data);
+    data = extend({}, {prodQR: 0, name: "", prize: 0, desc: ""}, data);
     BaseModels.call(this, data);
 };
 BaseModels.initialize(Product);
+extend(Product, {
+    findByQR: function(email) {
+        return this._models.filter(function(u) {
+            return u.email === email;
+        })[0];
+    }
+});
 extend(Product.prototype, BaseModels.prototype);
 
 var User = function(data) {
@@ -101,27 +109,18 @@ extend(User, {
 extend(User.prototype, BaseModels.prototype);
 //--------------------------------------------
 //--------------------------------------------
-/*
-    parte donde escribiremos nuestro codigo:
-    * los controladores
-    * middleware
-    * rutas
-    * errores
-*/
-
 
 var productsController = {
     index: function(req, res){
         //res.render("post-list",{posts: Post.getAll(), user: req.session.user });
-        res.send(Post.getAll());
+        console.log(Product.getAll());
+        res.send(Product.getAll());
     },
     view: function(req, res){
-        //console.log(req.postPlantilla);
-        req.postPlantilla.views++;
-        res.render("post-detail",{post: req.postPlantilla, user: req.session.user});
+        console.log(req.postPlantilla);
+        res.send(Product.find(req.productid));
     },
     edit: function(req, res){
-        //console.log(req.postPlantilla);
         res.render("new-post",{post: req.postPlantilla, user: req.session.user});
     },
     create: function(req, res){
@@ -146,14 +145,14 @@ var productsController = {
         post.update();
         res.redirect('/posts');
     },
-    param: function(req, res, next, postid){
-        req.postPlantilla = Post.find(postid);
+    param: function(req, res, next, productid){
+        req.postPlantilla = Product.find(productid);
         next();
     }
 };
 // Procesamos el parametro : postid, utilizando el metodo creado en 
 // el controlador. Seimpre se relalizan antes de procesar las rutas
-app.param("postid", productsController.param);
+app.param("productid", productsController.param);
 
 // Procesamos las rutas
 app.get('/', function (req, res){ res.render('base', {user: req.session.user })});
@@ -161,12 +160,12 @@ app.get('/', function (req, res){ res.render('base', {user: req.session.user })}
 
 
 app.get('/products', productsController.index);
-app.get('/posts/new', auth.requiereSession, productsController.create);
-app.post('/posts', productsController.save);
-app.get('/posts/:postid', productsController.view);
-app.get('/posts/:postid/edit', auth.requiereSession, productsController.edit);
-app.put('/posts/:postid',productsController.actualitzar);
-app.delete('/posts/:postid', auth.requiereSession, productsController.delete);
+//app.get('/posts/new', auth.requiereSession, productsController.create);
+//app.post('/posts', productsController.save);
+app.get('/products/:productid', productsController.view);
+//app.get('/posts/:postid/edit', auth.requiereSession, productsController.edit);
+//app.put('/posts/:postid',productsController.actualitzar);
+//app.delete('/posts/:postid', auth.requiereSession, productsController.delete);
 
 //app.post('/login', auth.createSession);
 app.get('/logout', auth.destroySession);
@@ -184,21 +183,14 @@ app.post('/register', auth.createUser, function(request,response){
     //console.log('Paco posting register');
     response.send(200);
 });
-/*
-    Parte donde escribiremos nuestro código:
-    * los controladores
-    * middleware
-    * rutas
-    * errores
- */
 
 app.use( express.static(app.get('public')) );
 // Indicamos el puerto
-app.listen(3000);
-console.log('Application Started on http://localhost:3000/');
+app.listen(3030);
+console.log('Application Started on http://localhost:3030/');
 
 /* Datos: los Posts */
-var product = new Product({name: "Patatuques", prize:40, desc:"Les patatuques de la aguela"});
+var product = new Product({prodQR: 33442, name: "Patatuques", prize:40, desc:"Les patatuques de la aguela"});
 product.save();
-product = new Product({name: "Melonucos", prize:30, desc:"Els melonucos de la aguela"});
+product = new Product({prodQR: 55542, name: "Melonucos", prize:30, desc:"Els melonucos de la aguela"});
 product.save();
