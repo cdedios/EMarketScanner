@@ -1,11 +1,11 @@
 package com.example.emarketnode;
 
 public class Product {
-	private double id;
+	private int id;
 	private String name, description;
 	private float prize;
 
-	public Product(double id, String name, String desc, float prize) {
+	public Product(int id, String name, String desc, float prize) {
 		this.id = id;
 		this.description = desc;
 		this.name = name;
@@ -24,7 +24,7 @@ public class Product {
 		return id;
 	}
 
-	public void setId(double id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 

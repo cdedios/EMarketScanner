@@ -186,7 +186,7 @@ app.post('/register', auth.createUser, function(request,response){
 
 app.use( express.static(app.get('public')) );
 // Indicamos el puerto
-app.listen(3030);
+app.listen(3000);
 console.log('Application Started on http://localhost:3030/');
 
 /* Datos: los Posts */

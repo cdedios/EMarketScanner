@@ -12,6 +12,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import android.os.AsyncTask;
@@ -30,7 +32,7 @@ public class ProductActivity extends Activity {
 	// private EditText amount;
 	private TextView title, prize, description;
 	// private Basket userBasket;
-	private Long productId;
+	private String productId;
 	private Product product;
 
 	@Override
@@ -43,10 +45,10 @@ public class ProductActivity extends Activity {
 			if (extras == null) {
 				productId = null;
 			} else {
-				productId = Long.parseLong((extras.getString("productId")));
+				productId = extras.getString("productId");
 			}
 		} else {
-			productId = (Long) savedInstanceState.getSerializable("productId");
+			productId = savedInstanceState.getString("productId");
 		}
 
 		title = (TextView) findViewById(R.id.textView1);
@@ -59,6 +61,7 @@ public class ProductActivity extends Activity {
 			AsyncTask<String, Void, JSONArray> {
 		@Override
 		protected JSONArray doInBackground(String... urls) {
+			Log.d("url","http://10.0.2.2:3000/products/"+urls[0] );
 			return getServer("http://10.0.2.2:3000/products/"+urls[0]);
 		}
 
@@ -67,13 +70,23 @@ public class ProductActivity extends Activity {
 		protected void onPostExecute(JSONArray result) {
 			Toast.makeText(getBaseContext(), "Data Sent!", Toast.LENGTH_LONG)
 					.show();
+			try {
+				JSONObject mJsonObject = new JSONObject();
+				mJsonObject = result.getJSONObject(0);
+				title.setText(mJsonObject.getString("name"));
+				description.setText(mJsonObject.getString("name"));
+				prize.setText(mJsonObject.getString("prize"));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}			
 			Log.d("result", "Value: " + result.toString());
 		}
 	}
 
 	public JSONArray getServer(String url) {
 		InputStream content = null;
-		JSONArray finalResult = null;
+		JSONArray finalResult = new JSONArray();
 		try {
 			HttpClient httpclient = new DefaultHttpClient();
 			HttpResponse response = httpclient.execute(new HttpGet(url));
@@ -90,6 +103,7 @@ public class ProductActivity extends Activity {
 		} catch (Exception e) {
 			// Log.("[GET REQUEST]", "Network exception", e);
 		}
+		Log.d("resultGet", finalResult.toString());
 		return finalResult;
 	}
 }
