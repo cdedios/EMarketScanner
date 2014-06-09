@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,10 +55,73 @@ public class ProductActivity extends Activity {
 		title = (TextView) findViewById(R.id.textView1);
 		prize = (TextView) findViewById(R.id.textView2);
 		description = (TextView) findViewById(R.id.textView3);
-		new GetProductsHttpAsyncTask().execute(productId.toString());	
+		new HttpAsyncTask().execute("http://10.0.2.2:3000/products/33442");//+productId.toString());	
 	}
-
-	private class GetProductsHttpAsyncTask extends
+	public static String GET(String url){
+        InputStream inputStream = null;
+        String result = "";
+        try {
+ 
+            // create HttpClient
+            HttpClient httpclient = new DefaultHttpClient();
+ 
+            // make GET request to the given URL
+            HttpResponse httpResponse = httpclient.execute(new HttpGet(url));
+ 
+            // receive response as inputStream
+            inputStream = httpResponse.getEntity().getContent();
+ 
+            // convert inputstream to string
+            if(inputStream != null){
+                result = convertInputStreamToString(inputStream); 
+            Log.d("pene", inputStream.toString());
+            }
+            else{
+                result = "Did not work!";
+            }
+ 
+        } catch (Exception e) {
+            Log.d("InputStream", e.getLocalizedMessage());
+        }
+ 
+        return result;
+    }
+ 
+    private static String convertInputStreamToString(InputStream inputStream) throws IOException{
+        BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
+        String line = "";
+        String result = "";
+        while((line = bufferedReader.readLine()) != null)
+            result += line;
+ 
+        inputStream.close();
+        return result;
+ 
+    }
+ 
+//    public boolean isConnected(){
+//        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
+//            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+//            if (networkInfo != null && networkInfo.isConnected()) 
+//                return true;
+//            else
+//                return false;   
+//    }
+    private class HttpAsyncTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... urls) {
+ 
+            return GET(urls[0]);
+        }
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(String result) {
+            Toast.makeText(getBaseContext(), "Received!", Toast.LENGTH_LONG).show();
+            Log.d("pene", result);
+            description.setText(result);
+       }
+    }
+	/*private class GetProductsHttpAsyncTask extends
 			AsyncTask<String, Void, JSONArray> {
 		@Override
 		protected JSONArray doInBackground(String... urls) {
@@ -87,9 +151,11 @@ public class ProductActivity extends Activity {
 	public JSONArray getServer(String url) {
 		InputStream content = null;
 		JSONArray finalResult = new JSONArray();
+		
 		try {
 			HttpClient httpclient = new DefaultHttpClient();
 			HttpResponse response = httpclient.execute(new HttpGet(url));
+			Log.d("response", "Value: " + response.toString());
 			content = response.getEntity().getContent();
 			// 10. convert inputstream to string
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
@@ -105,5 +171,5 @@ public class ProductActivity extends Activity {
 		}
 		Log.d("resultGet", finalResult.toString());
 		return finalResult;
-	}
+	}*/
 }
