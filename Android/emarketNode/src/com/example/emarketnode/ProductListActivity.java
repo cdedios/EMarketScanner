@@ -13,30 +13,22 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.app.Activity;
-import android.app.ListActivity;
+
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
+
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.provider.ContactsContract;
+
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.GridView;
-import android.widget.ListAdapter;
+
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
-import android.widget.Toast;
+
 import android.widget.AdapterView.OnItemClickListener;
 
 public class ProductListActivity extends Activity implements
@@ -97,13 +89,12 @@ public class ProductListActivity extends Activity implements
 			long arg3) {
 		Product productClicked = (Product) parent.getItemAtPosition(position);
 		Intent myIntent = new Intent(this, ProductActivity.class);
-		myIntent.putExtra("id", productClicked.getId());
+		myIntent.putExtra("productId", String.valueOf(productClicked.getId()));
 		startActivity(myIntent);
 	}
 
 	public static List<Product> GET(String url) {
 		InputStream inputStream = null;
-		JSONObject reslt = null;
 		List<Product> result = new ArrayList<Product>();
 		try {
 
@@ -118,39 +109,13 @@ public class ProductListActivity extends Activity implements
 
 			// convert inputstream to string
 			if (inputStream != null) {
-//				reslt = convertInputStreamToJSONObject(inputStream);
+				// reslt = convertInputStreamToJSONObject(inputStream);
 				result = convertInputStreamToProductList(inputStream);
 			}
 		} catch (Exception e) {
 			Log.d("InputStream exception", e.getLocalizedMessage());
 		}
 		return result;
-	}
-
-	private static String convertInputStreamToString(InputStream inputStream)
-			throws IOException {
-		BufferedReader bufferedReader = new BufferedReader(
-				new InputStreamReader(inputStream));
-		String line = "";
-		String result = "";
-		while ((line = bufferedReader.readLine()) != null)
-			result += line;
-
-		inputStream.close();
-		return result;
-	}
-
-	private static JSONObject convertInputStreamToJSONObject(
-			InputStream inputStream) throws JSONException, IOException {
-		BufferedReader bufferedReader = new BufferedReader(
-				new InputStreamReader(inputStream));
-		String line = "";
-		String result = "";
-		while ((line = bufferedReader.readLine()) != null)
-			result += line;
-
-		inputStream.close();
-		return new JSONObject(result);
 	}
 
 	private static List<Product> convertInputStreamToProductList(
@@ -165,8 +130,13 @@ public class ProductListActivity extends Activity implements
 			while ((line = bufferedReader.readLine()) != null)
 				result += line;
 			inputStream.close();
-			JSONObject obj = new JSONObject(result);
-			Log.d("jsonobjs",obj.toString());
+			JSONArray jArray = new JSONArray(result);
+			if (jArray != null) {
+				for (int i = 0; i < jArray.length(); i++) {
+					conversion.add(new Product(jArray.getJSONObject(i)));
+				}
+			}
+			Log.d("jsonobjs", conversion.toString());
 		} catch (IOException | JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
