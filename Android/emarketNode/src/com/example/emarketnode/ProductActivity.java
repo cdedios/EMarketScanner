@@ -55,121 +55,91 @@ public class ProductActivity extends Activity {
 		title = (TextView) findViewById(R.id.textView1);
 		prize = (TextView) findViewById(R.id.textView2);
 		description = (TextView) findViewById(R.id.textView3);
-		new HttpAsyncTask().execute("http://10.0.2.2:3000/products/33442");//+productId.toString());	
+
+		new HttpAsyncTask().execute("http://10.0.2.2:3000/products/"
+				+ productId.toString().trim());
+
 	}
-	public static String GET(String url){
-        InputStream inputStream = null;
-        String result = "";
-        try {
- 
-            // create HttpClient
-            HttpClient httpclient = new DefaultHttpClient();
- 
-            // make GET request to the given URL
-            HttpResponse httpResponse = httpclient.execute(new HttpGet(url));
- 
-            // receive response as inputStream
-            inputStream = httpResponse.getEntity().getContent();
- 
-            // convert inputstream to string
-            if(inputStream != null){
-                result = convertInputStreamToString(inputStream); 
-            Log.d("pene", inputStream.toString());
-            }
-            else{
-                result = "Did not work!";
-            }
- 
-        } catch (Exception e) {
-            Log.d("InputStream", e.getLocalizedMessage());
-        }
- 
-        return result;
-    }
- 
-    private static String convertInputStreamToString(InputStream inputStream) throws IOException{
-        BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
-        String line = "";
-        String result = "";
-        while((line = bufferedReader.readLine()) != null)
-            result += line;
- 
-        inputStream.close();
-        return result;
- 
-    }
- 
-//    public boolean isConnected(){
-//        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
-//            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-//            if (networkInfo != null && networkInfo.isConnected()) 
-//                return true;
-//            else
-//                return false;   
-//    }
-    private class HttpAsyncTask extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... urls) {
- 
-            return GET(urls[0]);
-        }
-        // onPostExecute displays the results of the AsyncTask.
-        @Override
-        protected void onPostExecute(String result) {
-            Toast.makeText(getBaseContext(), "Received!", Toast.LENGTH_LONG).show();
-            Log.d("pene", result);
-            description.setText(result);
-       }
-    }
-	/*private class GetProductsHttpAsyncTask extends
-			AsyncTask<String, Void, JSONArray> {
+
+	public static JSONObject GET(String url) {
+		InputStream inputStream = null;
+		JSONObject reslt = null;
+		List<Product> result = new ArrayList<Product>();
+		try {
+
+			// create HttpClient
+			HttpClient httpclient = new DefaultHttpClient();
+
+			// make GET request to the given URL
+			HttpResponse httpResponse = httpclient.execute(new HttpGet(url));
+
+			// receive response as inputStream
+			inputStream = httpResponse.getEntity().getContent();
+
+			// convert inputstream to string
+			if (inputStream != null) {
+				reslt = convertInputStreamToJSONObject(inputStream);
+			}
+		} catch (Exception e) {
+			Log.d("InputStream", e.getLocalizedMessage());
+		}
+		return reslt;
+	}
+
+	private static String convertInputStreamToString(InputStream inputStream)
+			throws IOException {
+		BufferedReader bufferedReader = new BufferedReader(
+				new InputStreamReader(inputStream));
+		String line = "";
+		String result = "";
+		while ((line = bufferedReader.readLine()) != null)
+			result += line;
+
+		inputStream.close();
+		return result;
+	}
+
+	private static JSONObject convertInputStreamToJSONObject(
+			InputStream inputStream) throws JSONException, IOException {
+		BufferedReader bufferedReader = new BufferedReader(
+				new InputStreamReader(inputStream));
+		String line = "";
+		String result = "";
+		while ((line = bufferedReader.readLine()) != null)
+			result += line;
+
+		inputStream.close();
+		return new JSONObject(result);
+	}
+
+	private class HttpAsyncTask extends AsyncTask<String, Void, JSONObject> {
 		@Override
-		protected JSONArray doInBackground(String... urls) {
-			Log.d("url","http://10.0.2.2:3000/products/"+urls[0] );
-			return getServer("http://10.0.2.2:3000/products/"+urls[0]);
+		protected JSONObject doInBackground(String... urls) {
+			return GET(urls[0]);
 		}
 
 		// onPostExecute displays the results of the AsyncTask.
 		@Override
-		protected void onPostExecute(JSONArray result) {
-			Toast.makeText(getBaseContext(), "Data Sent!", Toast.LENGTH_LONG)
-					.show();
-			try {
-				JSONObject mJsonObject = new JSONObject();
-				mJsonObject = result.getJSONObject(0);
-				title.setText(mJsonObject.getString("name"));
-				description.setText(mJsonObject.getString("name"));
-				prize.setText(mJsonObject.getString("prize"));
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}			
-			Log.d("result", "Value: " + result.toString());
+		protected void onPostExecute(JSONObject result) {
+			Product p = new Product(result);
+			description.setText(p.getDescription());
+			title.setText(p.getName());
+			prize.setText(String.valueOf(p.getPrize()));
 		}
 	}
 
-	public JSONArray getServer(String url) {
-		InputStream content = null;
-		JSONArray finalResult = new JSONArray();
-		
-		try {
-			HttpClient httpclient = new DefaultHttpClient();
-			HttpResponse response = httpclient.execute(new HttpGet(url));
-			Log.d("response", "Value: " + response.toString());
-			content = response.getEntity().getContent();
-			// 10. convert inputstream to string
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					response.getEntity().getContent(), "UTF-8"));
-			StringBuilder builder = new StringBuilder();
-			for (String line = null; (line = reader.readLine()) != null;) {
-				builder.append(line).append("\n");
-			}
-			JSONTokener tokener = new JSONTokener(builder.toString());
-			finalResult = new JSONArray(tokener);
-		} catch (Exception e) {
-			// Log.("[GET REQUEST]", "Network exception", e);
-		}
-		Log.d("resultGet", finalResult.toString());
-		return finalResult;
-	}*/
+	@Override
+	protected void onPause() {
+		super.onPause();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+	}
 }

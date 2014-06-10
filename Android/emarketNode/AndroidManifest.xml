@@ -35,6 +35,8 @@
         </activity>
         <activity android:label="@string/app_name" android:name="com.example.emarketnode.ProductActivity">
         </activity>
+        <activity android:label="@string/app_name" android:name="com.example.emarketnode.ProductListActivity">
+        </activity>
     </application>
 
 </manifest>

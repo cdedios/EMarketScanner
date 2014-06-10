@@ -1,5 +1,8 @@
 package com.example.emarketnode;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class Product {
 	private int id;
 	private String name, description;
@@ -10,6 +13,18 @@ public class Product {
 		this.description = desc;
 		this.name = name;
 		this.prize = prize;
+	}
+
+	public Product(JSONObject json) {
+		try {
+			this.id = json.getInt("id");
+			this.description = json.getString("desc");
+			this.name = json.getString("name");
+			this.prize = Float.parseFloat(json.getString("prize"));
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public String getDescription() {

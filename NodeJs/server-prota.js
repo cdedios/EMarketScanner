@@ -118,7 +118,8 @@ var productsController = {
     },
     view: function(req, res){
         console.log(req.postPlantilla);
-        res.send(Product.find(req.productid));
+	res.send(req.postPlantilla);
+        //res.send(Product.find(req.productid));
     },
     edit: function(req, res){
         res.render("new-post",{post: req.postPlantilla, user: req.session.user});
