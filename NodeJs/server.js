@@ -163,7 +163,13 @@ app.listen(3000)
 console.log('Application Started on http://localhost:3000/');
 
 /* Datos: los Posts */
-var product = new Product({prodQR: 33442, name: "Patatuques", prize:40, desc:"Les patatuques de la aguela"});
+var product = new Product({prodQR: 33442, name: "Patates", prize:4, desc:"Patates de l'horta de Lleida. Preu el kg"});
 product.save();
-product = new Product({prodQR: 55542, name: "Melonucos", prize:30, desc:"Els melonucos de la aguela"});
+product = new Product({prodQR: 55541, name: "Melons", prize:3, desc:"Els millors melons de Sucs. Preu el kg"});
+product.save();
+product = new Product({prodQR: 55543, name: "Plàtans", prize:300, desc:"Plàtans de canàries. Preu el kg"});
+product.save();
+product = new Product({prodQR: 55544, name: "Peres", prize:30, desc:"Peres conferencia. Preu el kg"});
+product.save();
+product = new Product({prodQR: 55545, name: "Cindries", prize:30, desc:"Cindries d'importació. Preu el kg"});
 product.save();
